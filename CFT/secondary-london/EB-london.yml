@@ -1,0 +1,86 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  sampleApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      Description: AWS Elastic Beanstalk Sample Application
+  sampleApplicationVersion:
+    Type: AWS::ElasticBeanstalk::ApplicationVersion
+    Properties:
+      ApplicationName:
+        Ref: sampleApplication
+      Description: AWS ElasticBeanstalk Sample Application Version
+      SourceBundle:
+        S3Bucket: london-bookapplication-02-12-2021
+        S3Key: londonBookProject.war
+  sampleConfigurationTemplate:
+    Type: AWS::ElasticBeanstalk::ConfigurationTemplate
+    Properties:
+      ApplicationName:
+        Ref: sampleApplication
+      Description: AWS ElasticBeanstalk Sample Configuration Template
+      OptionSettings:
+      - Namespace: aws:ec2:vpc
+        OptionName: VPCId
+        Value: vpc-0fe8d4f2010f6aa24
+      - Namespace: aws:ec2:vpc
+        OptionName: Subnets
+        Value:
+          Fn::Join:
+          - ","
+          - - subnet-0830564447a1b6ada
+            - subnet-0f28cf63e74cc8557
+      - Namespace: aws:ec2:vpc
+        OptionName: ELBSubnets
+        Value:
+          Fn::Join:
+          - ","
+          - - subnet-0c48dcb31799082a0
+            - subnet-0b8ad84b37933a5c3
+      - Namespace: aws:autoscaling:asg
+        OptionName: MinSize
+        Value: '2'
+      - Namespace: aws:autoscaling:asg
+        OptionName: MaxSize
+        Value: '4'
+      - Namespace: aws:elasticbeanstalk:environment
+        OptionName: EnvironmentType
+        Value: LoadBalanced
+      - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: IamInstanceProfile
+        Value: aws-elasticbeanstalk-ec2-role
+      - Namespace: aws:autoscaling:updatepolicy:rollingupdate
+        OptionName: RollingUpdateEnabled
+        Value: true
+
+      - Namespace: aws:autoscaling:updatepolicy:rollingupdate
+        OptionName: RollingUpdateType
+        Value: Health
+
+      - Namespace: aws:autoscaling:trigger
+        OptionName: MeasureName
+        Value: CPUUtilization
+
+      - Namespace: aws:autoscaling:trigger
+        OptionName: Unit
+        Value: Percent
+
+      - Namespace: aws:autoscaling:trigger
+        OptionName: UpperThreshold
+        Value: 70
+
+      - Namespace: aws:autoscaling:trigger
+        OptionName: LowerThreshold
+        Value: 0
+      SolutionStackName: 64bit Amazon Linux 2 v4.2.8 running Tomcat 8.5 Corretto 11
+  sampleEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName:
+        Ref: sampleApplication
+      Description: AWS ElasticBeanstalk Sample Environment
+      TemplateName:
+        Ref: sampleConfigurationTemplate
+      VersionLabel:
+        Ref: sampleApplicationVersion
