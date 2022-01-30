@@ -1,0 +1,13 @@
+
+Resources:
+  SNSmail:
+    Type: AWS::SNS::Topic
+    Properties: 
+      DisplayName: SNSmail
+      FifoTopic: 'false'
+      Subscription: 
+        - Protocol: email
+          Endpoint: pallav.kumar@inveniolsi.com
+        - Protocol: email
+          Endpoint: lahari.sappa@inveniolsi.com
+      TopicName: LondonAlarm

@@ -1,0 +1,54 @@
+Resources:
+  DNS: 
+    Type: "AWS::Route53::HostedZone"
+    Properties: 
+      HostedZoneConfig: 
+        Comment: 'Private hosted zone for book.com'
+      Name: 'book.lsi' 
+      VPCs: 
+        - 
+          VPCId: 'vpc-0fe8d4f2010f6aa24'
+          VPCRegion: 'eu-west-2'
+        - 
+          VPCId: 'vpc-0bc15fa494cb899cb'
+          VPCRegion: 'us-east-2'
+  BookHealthCheck:
+    Type: AWS::Route53::HealthCheck
+    Properties:
+      HealthCheckConfig:
+        Type: HTTP
+        FullyQualifiedDomainName: eb-l-samp-1gff029rcfotz.eba-wy2tppv3.eu-west-2.elasticbeanstalk.com
+        RequestInterval: '10'
+        FailureThreshold: '3'
+  Record1: 
+    Type: AWS::Route53::RecordSet
+    Properties: 
+      AliasTarget: 
+          DNSName: EB-l-samp-1GFF029RCFOTZ.eba-wy2tppv3.eu-west-2.elasticbeanstalk.com
+          EvaluateTargetHealth: 'true'
+          HostedZoneId: Z1GKAAAUGATPF1
+      Comment: london region records
+      Failover: PRIMARY
+      HealthCheckId: !Ref BookHealthCheck
+      HostedZoneId: !Ref DNS
+      SetIdentifier: london-record
+      Name: win.book.lsi
+      Type: A
+    DependsOn: DNS
+  Record2: 
+    Type: AWS::Route53::RecordSet
+    Properties: 
+      AliasTarget: 
+          DNSName: EB-o-samp-IB9YUKUU1JGQ.eba-k8gjrnan.us-east-2.elasticbeanstalk.com
+          EvaluateTargetHealth: 'true'
+          HostedZoneId: Z14LCN19Q5QHIC
+      Comment: ohio region records
+      Failover: SECONDARY
+      HostedZoneId: !Ref DNS
+      SetIdentifier: ohio-record
+      Name: win.book.lsi
+      Type: A
+    DependsOn: DNS
+
+
+

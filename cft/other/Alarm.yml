@@ -1,0 +1,19 @@
+
+Resources:
+  CPUAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: CPU alarm for my instance
+      AlarmActions: 
+        - arn:aws:sns:eu-west-2:312665446329:LondonAlarm
+      Namespace: AWS/ElasticBeanstalk
+      Statistic: Maximum
+      Period: '60'
+      EvaluationPeriods: '1'
+      Threshold: '0'
+      ComparisonOperator: GreaterThanThreshold
+      MetricName: EnvironmentHealth
+      Dimensions:
+        - Name: EnvironmentName
+          Value: EB-l-samp-1GFF029RCFOTZ
+      
