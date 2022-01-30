@@ -1,0 +1,12 @@
+
+Resources:
+  MyS3Bucket1:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: "bookapplication01-12-2021"
+  MyS3Bucket2:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: "rdsbackups01-12-2021"
